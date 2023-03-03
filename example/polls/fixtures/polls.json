@@ -1,0 +1,50 @@
+[
+    {
+        "model": "polls.poll",
+        "pk": 1,
+        "fields": {
+            "question": "What's new?",
+            "pub_date": "2023-03-03T21:07:19Z"
+        }
+    },
+    {
+        "model": "polls.choice",
+        "pk": 3,
+        "fields": {
+            "poll": 1,
+            "text": "The sky is!"
+        }
+    },
+    {
+        "model": "polls.choice",
+        "pk": 4,
+        "fields": {
+            "poll": 1,
+            "text": "What is?"
+        }
+    },
+    {
+        "model": "polls.answer",
+        "pk": 2,
+        "fields": {
+            "timestamp": "2023-03-04T22:26:24.182Z",
+            "choice": 3
+        }
+    },
+    {
+        "model": "polls.answer",
+        "pk": 3,
+        "fields": {
+            "timestamp": "2023-03-04T20:34:38.600Z",
+            "choice": 4
+        }
+    },
+    {
+        "model": "polls.answer",
+        "pk": 4,
+        "fields": {
+            "timestamp": "2023-03-03T22:26:55.846Z",
+            "choice": 3
+        }
+    }
+]

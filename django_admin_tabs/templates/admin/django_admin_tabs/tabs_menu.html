@@ -1,0 +1,11 @@
+{% load i18n static admin_urls admin_modify %}
+
+<div class="django-admin-tabs-nav">
+  {% for tab in admin_tabs %}
+  <a class="admin-tab-link {% if tab.get_tab_slug == current_tab %}selected{% endif %}"
+    href="{% url instance_meta_opts|admin_urlname:'step' anchor.id tab.get_tab_slug %}{% if is_popup %}?_popup=1{% endif %}"
+  >
+    {{ tab.get_tab_name }}
+  </a>
+  {% endfor %}
+</div>

@@ -1,0 +1,60 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    steps:
+      - name: CI Matrix
+        id: create_matrix
+        uses: fabiocaccamo/create-matrix-action@v3
+        with:
+          matrix: |
+            python-version {3.8}, django-version {3.2,4.0,4.1,4.2}
+            python-version {3.9}, django-version {3.2,4.0,4.1,4.2}
+            python-version {3.10}, django-version {3.2,4.0,4.1,4.2}
+            python-version {3.11}, django-version {3.2,4.0,4.1,4.2}
+    outputs:
+      matrix: ${{ steps.create_matrix.outputs.matrix }}s
+
+  test:
+    needs: Prepare
+    strategy:
+      fail-fast: false
+      matrix:
+        include: ${{ fromJson(needs.prepare.outputs.matrix) }}
+    name: "Python ${{ matrix.python-version }} + Django ${{ matrix.django-version }}"
+    runs-on: ubuntu-latest
+    env:
+      POETRY_VIRTUALENVS_CREATE: false
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+      - run: pip install poetry
+      - run: poetry install
+      - run: poetry build --format wheel
+      - name: Make sure tests use dist instead of source
+        run: |
+          rm -rf django_admin_tabs
+          pip install --force-reinstall dist/*.whl
+      - run: pip install "Django==${{ matrix.django-version }}.*"
+      - run: poetry run python manage.py test django_admin_tabs
+
+  lint:
+    name: "Ruff"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+      - run: pip install ruff
+      - run: ruff check .

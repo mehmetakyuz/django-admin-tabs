@@ -1,0 +1,15 @@
+version: "3.9"
+services:
+  admin_tabs:
+    container_name: django-admin-tabs
+    working_dir: /app/
+    build: .
+    restart: unless-stopped
+    volumes:
+      - ./:/app
+    ports:
+      - "8000:8000"
+
+networks:
+  main:
+    driver: bridge

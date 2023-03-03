@@ -1,0 +1,40 @@
+{% extends "admin/change_form.html" %}
+{% load i18n static admin_urls admin_modify %}
+
+{% block title %}{% trans "Change" %} {{ original }}{% endblock %}
+
+{% block extrahead %}
+  {{ block.super }}
+  <link rel="stylesheet" type="text/css" href="{% static "admin/css/django_admin_tabs.css" %}"/>
+{% endblock %}
+
+{% block breadcrumbs %}
+  <div class="breadcrumbs">
+    <a href="{% url 'admin:index' %}">{% trans 'Home' %} </a>
+    &rsaquo;
+    <a href="{% url 'admin:app_list' app_label=instance_meta_opts.app_label %}">
+      {{ instance_meta_opts.app_config.verbose_name }}
+    </a>
+    &rsaquo;
+    <a href="{% url instance_meta_opts|admin_urlname:'changelist' %}">
+      {{ instance_meta_opts.verbose_name_plural|capfirst }}
+    </a>
+    &rsaquo;
+    {% if has_change_permission %}
+      <a href="{% url instance_meta_opts|admin_urlname:'change' anchor.id %}">
+        {{ anchor }}
+      </a>
+    {% else %}
+      {{ anchor|capfirst }}
+    {% endif %}
+    &rsaquo;
+    {{ current_tab.capitalize }}
+  </div>
+{% endblock %}
+
+{% block content %}
+  {% include "admin/django_admin_tabs/tabs_menu.html" %}
+  <div>
+    {{ block.super }}
+  </div>
+{% endblock content %}

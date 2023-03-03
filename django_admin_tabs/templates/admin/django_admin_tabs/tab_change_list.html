@@ -1,0 +1,73 @@
+{% extends "admin/change_list.html" %}
+{% load i18n admin_urls static admin_list %}
+
+{% block title %}{% trans "Change" %} {{ original }}{% endblock %}
+
+{% block extrahead %}
+  {{ block.super }}
+  <link rel="stylesheet" type="text/css" href="{% static "admin/css/django_admin_tabs.css" %}"/>
+{% endblock %}
+
+{% block breadcrumbs %}
+  <div class="breadcrumbs">
+    <a href="{% url 'admin:index' %}">{% trans 'Home' %}</a>
+    &rsaquo; <a
+          href="{% url 'admin:app_list' app_label=instance_meta_opts.app_label %}">{{ instance_meta_opts.app_config.verbose_name }}</a>
+    &rsaquo; <a
+          href="{% url instance_meta_opts|admin_urlname:'changelist' %}">{{ instance_meta_opts.verbose_name_plural|capfirst }}</a>
+    &rsaquo; {% if has_change_permission %}
+    <a href="{% url instance_meta_opts|admin_urlname:'change' anchor.id %}">{{ anchor }}</a>{% else %}
+    {{ anchor|capfirst }}{% endif %}
+    &rsaquo; {{ cl.opts.verbose_name_plural|capfirst }}
+  </div>
+{% endblock %}
+
+{% block object-tools-items %}
+  {% if has_add_permission %}
+    <li>
+      <a href="{% add_preserved_filters add_url is_popup to_field %}" class="addlink">
+        {% blocktrans with cl.opts.verbose_name as name %}Add {{ name }}{% endblocktrans %}
+      </a>
+    </li>
+  {% endif %}
+  {% for tool in objectactions %}
+    <li class="objectaction-item" data-tool-name="{{ tool.name }}">
+      {% url tools_view_name pk=anchor.id tool=tool.name as action_url %}
+      <a href="{% add_preserved_filters action_url %}" title="{{ tool.standard_attrs.title }}"
+      {% for k, v in tool.custom_attrs.items %}
+        {{ k }}="{{ v }}"
+      {% endfor %}
+      class="{{ tool.standard_attrs.class }}">
+      {{ tool.label|capfirst }}
+      </a>
+    </li>
+  {% endfor %}
+{% endblock %}
+
+{% block result_list %}
+  {% if changelist_action_form %}
+    <div class="steps module" style="margin-top: 10px;">
+      <h2>{{ changelist_action_form }}</h2>
+      <table>
+        {% for field in changelist_action_form %}
+          <tr>
+            <td>{{ field.label }} {{ field.errors }}</td>
+            <td>{{ field }}</td>
+          </tr>
+        {% endfor %}
+        <tr>
+          <td colspan="2">
+            <input name="_submit_bulk" class="default" type="submit" value="Submit"/>
+          </td>
+        </tr>
+      </table>
+    </div>
+  {% endif %}
+  {{ block.super }}
+{% endblock %}
+
+{% block content %}
+  <h2>{{ anchor }}</h2>
+  {% include "admin/django_admin_tabs/tabs_menu.html" %}
+  {{ block.super }}
+{% endblock content %}
